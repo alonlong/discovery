@@ -4,7 +4,7 @@
 // 	protoc        v3.11.4
 // source: greeter.proto
 
-package greeter
+package apis
 
 import (
 	context "context"
@@ -29,7 +29,6 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-// The request message containing the user's name.
 type SayHelloRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -77,7 +76,6 @@ func (x *SayHelloRequest) GetName() string {
 	return ""
 }
 
-// The response message containing the greetings
 type SayHelloReply struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -129,17 +127,18 @@ var File_greeter_proto protoreflect.FileDescriptor
 
 var file_greeter_proto_rawDesc = []byte{
 	0x0a, 0x0d, 0x67, 0x72, 0x65, 0x65, 0x74, 0x65, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12,
-	0x07, 0x67, 0x72, 0x65, 0x65, 0x74, 0x65, 0x72, 0x22, 0x25, 0x0a, 0x0f, 0x53, 0x61, 0x79, 0x48,
-	0x65, 0x6c, 0x6c, 0x6f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x6e,
-	0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x22,
-	0x29, 0x0a, 0x0d, 0x53, 0x61, 0x79, 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x52, 0x65, 0x70, 0x6c, 0x79,
-	0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x32, 0x49, 0x0a, 0x07, 0x47, 0x72,
-	0x65, 0x65, 0x74, 0x65, 0x72, 0x12, 0x3e, 0x0a, 0x08, 0x53, 0x61, 0x79, 0x48, 0x65, 0x6c, 0x6c,
-	0x6f, 0x12, 0x18, 0x2e, 0x67, 0x72, 0x65, 0x65, 0x74, 0x65, 0x72, 0x2e, 0x53, 0x61, 0x79, 0x48,
-	0x65, 0x6c, 0x6c, 0x6f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x67, 0x72,
-	0x65, 0x65, 0x74, 0x65, 0x72, 0x2e, 0x53, 0x61, 0x79, 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x52, 0x65,
-	0x70, 0x6c, 0x79, 0x22, 0x00, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x04, 0x61, 0x70, 0x69, 0x73, 0x22, 0x25, 0x0a, 0x0f, 0x53, 0x61, 0x79, 0x48, 0x65, 0x6c, 0x6c,
+	0x6f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x22, 0x29, 0x0a, 0x0d,
+	0x53, 0x61, 0x79, 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x18, 0x0a,
+	0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07,
+	0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x32, 0x4a, 0x0a, 0x0e, 0x47, 0x72, 0x65, 0x65, 0x74,
+	0x65, 0x72, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x38, 0x0a, 0x08, 0x53, 0x61, 0x79,
+	0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x12, 0x15, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x53, 0x61, 0x79,
+	0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x13, 0x2e, 0x61,
+	0x70, 0x69, 0x73, 0x2e, 0x53, 0x61, 0x79, 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x52, 0x65, 0x70, 0x6c,
+	0x79, 0x22, 0x00, 0x42, 0x09, 0x5a, 0x07, 0x2e, 0x2e, 0x2f, 0x61, 0x70, 0x69, 0x73, 0x62, 0x06,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -156,12 +155,12 @@ func file_greeter_proto_rawDescGZIP() []byte {
 
 var file_greeter_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_greeter_proto_goTypes = []interface{}{
-	(*SayHelloRequest)(nil), // 0: greeter.SayHelloRequest
-	(*SayHelloReply)(nil),   // 1: greeter.SayHelloReply
+	(*SayHelloRequest)(nil), // 0: apis.SayHelloRequest
+	(*SayHelloReply)(nil),   // 1: apis.SayHelloReply
 }
 var file_greeter_proto_depIdxs = []int32{
-	0, // 0: greeter.Greeter.SayHello:input_type -> greeter.SayHelloRequest
-	1, // 1: greeter.Greeter.SayHello:output_type -> greeter.SayHelloReply
+	0, // 0: apis.GreeterService.SayHello:input_type -> apis.SayHelloRequest
+	1, // 1: apis.GreeterService.SayHello:output_type -> apis.SayHelloReply
 	1, // [1:2] is the sub-list for method output_type
 	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
@@ -228,74 +227,72 @@ var _ grpc.ClientConnInterface
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion6
 
-// GreeterClient is the client API for Greeter service.
+// GreeterServiceClient is the client API for GreeterService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type GreeterClient interface {
-	// Sends a greeting
+type GreeterServiceClient interface {
 	SayHello(ctx context.Context, in *SayHelloRequest, opts ...grpc.CallOption) (*SayHelloReply, error)
 }
 
-type greeterClient struct {
+type greeterServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewGreeterClient(cc grpc.ClientConnInterface) GreeterClient {
-	return &greeterClient{cc}
+func NewGreeterServiceClient(cc grpc.ClientConnInterface) GreeterServiceClient {
+	return &greeterServiceClient{cc}
 }
 
-func (c *greeterClient) SayHello(ctx context.Context, in *SayHelloRequest, opts ...grpc.CallOption) (*SayHelloReply, error) {
+func (c *greeterServiceClient) SayHello(ctx context.Context, in *SayHelloRequest, opts ...grpc.CallOption) (*SayHelloReply, error) {
 	out := new(SayHelloReply)
-	err := c.cc.Invoke(ctx, "/greeter.Greeter/SayHello", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/apis.GreeterService/SayHello", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// GreeterServer is the server API for Greeter service.
-type GreeterServer interface {
-	// Sends a greeting
+// GreeterServiceServer is the server API for GreeterService service.
+type GreeterServiceServer interface {
 	SayHello(context.Context, *SayHelloRequest) (*SayHelloReply, error)
 }
 
-// UnimplementedGreeterServer can be embedded to have forward compatible implementations.
-type UnimplementedGreeterServer struct {
+// UnimplementedGreeterServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedGreeterServiceServer struct {
 }
 
-func (*UnimplementedGreeterServer) SayHello(context.Context, *SayHelloRequest) (*SayHelloReply, error) {
+func (*UnimplementedGreeterServiceServer) SayHello(context.Context, *SayHelloRequest) (*SayHelloReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SayHello not implemented")
 }
 
-func RegisterGreeterServer(s *grpc.Server, srv GreeterServer) {
-	s.RegisterService(&_Greeter_serviceDesc, srv)
+func RegisterGreeterServiceServer(s *grpc.Server, srv GreeterServiceServer) {
+	s.RegisterService(&_GreeterService_serviceDesc, srv)
 }
 
-func _Greeter_SayHello_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _GreeterService_SayHello_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SayHelloRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GreeterServer).SayHello(ctx, in)
+		return srv.(GreeterServiceServer).SayHello(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/greeter.Greeter/SayHello",
+		FullMethod: "/apis.GreeterService/SayHello",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GreeterServer).SayHello(ctx, req.(*SayHelloRequest))
+		return srv.(GreeterServiceServer).SayHello(ctx, req.(*SayHelloRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Greeter_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "greeter.Greeter",
-	HandlerType: (*GreeterServer)(nil),
+var _GreeterService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "apis.GreeterService",
+	HandlerType: (*GreeterServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "SayHello",
-			Handler:    _Greeter_SayHello_Handler,
+			Handler:    _GreeterService_SayHello_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
