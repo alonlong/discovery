@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"discovery/apis"
+	"discovery/apis/greeter"
 	"log"
 	"net"
 
@@ -26,12 +26,12 @@ func init() {
 
 // the main process for the server subcommand
 func serve() {
-	lis, err := net.Listen("tcp", "localhost:15001")
+	lis, err := net.Listen("tcp", "192.168.0.1:15001")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	apis.RegisterGreeterServiceServer(s, &apis.GreeterService{})
+	greeter.RegisterGreeterServer(s, &greeter.Server{})
 
 	// Register reflection service on gRPC server.
 	reflection.Register(s)

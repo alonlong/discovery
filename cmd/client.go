@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"context"
-	"discovery/apis"
+	"discovery/apis/greeter"
 	"log"
 
 	"github.com/spf13/cobra"
@@ -29,9 +29,9 @@ func cli() {
 		log.Fatalf("did not connect: %v", err)
 	}
 	defer conn.Close()
-	c := apis.NewGreeterServiceClient(conn)
+	c := greeter.NewGreeterClient(conn)
 
-	r, err := c.SayHello(context.Background(), &apis.SayHelloRequest{Name: "Alon"})
+	r, err := c.SayHello(context.Background(), &greeter.SayHelloRequest{Name: "Alon"})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}

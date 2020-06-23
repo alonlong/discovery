@@ -9,8 +9,8 @@ import (
 
 // RootCmd represents the base command when called without any subcommand
 var RootCmd = &cobra.Command{
-	Use:   "discovry",
-	Short: "The discovry server application",
+	Use:   "discovery",
+	Short: "The discovery server application",
 	Long:  "Run the 'serve' subcommand to start the grpc server",
 }
 

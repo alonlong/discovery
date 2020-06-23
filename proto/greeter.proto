@@ -1,9 +1,9 @@
 syntax = "proto3";
 
 package apis;
-option go_package = "../apis";
+option go_package = "../apis/greeter";
 
-service GreeterService {
+service Greeter {
   rpc SayHello (SayHelloRequest) returns (SayHelloReply) {}
 }
 
