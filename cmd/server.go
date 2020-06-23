@@ -26,7 +26,7 @@ func init() {
 
 // the main process for the server subcommand
 func serve() {
-	lis, err := net.Listen("tcp", "192.168.0.1:15001")
+	lis, err := net.Listen("tcp", "localhost:15001")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
