@@ -3,10 +3,13 @@ package cmd
 import (
 	"context"
 	"discovery/apis/greeter"
+	"discovery/pkg/balancer"
 	"log"
+	"time"
 
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/resolver"
 )
 
 // cliCmd represents the serve command
@@ -24,16 +27,27 @@ func init() {
 
 // the main process for the client subcommand
 func cli() {
-	conn, err := grpc.Dial("localhost:15001", grpc.WithInsecure())
+	r := balancer.NewEtcdBalancer("192.168.0.3:2379").Resolver()
+	resolver.Register(r)
+	conn, err := grpc.Dial(
+		r.Scheme()+"://author/my-service",
+		grpc.WithBalancerName("round_robin"),
+		grpc.WithInsecure(),
+	)
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
 	defer conn.Close()
 	c := greeter.NewGreeterClient(conn)
 
-	r, err := c.SayHello(context.Background(), &greeter.SayHelloRequest{Name: "Alon"})
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+	for {
+		reply, err := c.SayHello(context.Background(), &greeter.SayHelloRequest{Name: "Alon"})
+		if err != nil {
+			log.Printf("could not greet: %v", err)
+		} else {
+			log.Printf("Greeting: %s", reply.Message)
+		}
+
+		time.Sleep(time.Second)
 	}
-	log.Printf("Greeting: %s", r.Message)
 }
