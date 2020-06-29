@@ -1,3 +1,4 @@
 .idea
 discovery.exe
 discovery
+etcd/default.etcd

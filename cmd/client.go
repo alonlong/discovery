@@ -27,7 +27,7 @@ func init() {
 
 // the main process for the client subcommand
 func cli() {
-	r := balancer.NewEtcdBalancer("192.168.0.3:2379").Resolver()
+	r := balancer.NewEtcdBalancer("localhost:2379").Resolver()
 	resolver.Register(r)
 	conn, err := grpc.Dial(
 		r.Scheme()+"://author/my-service",

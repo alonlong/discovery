@@ -69,7 +69,7 @@ func serve() {
 	greeter.RegisterGreeterServer(s, &greeter.Server{})
 
 	// register the service to etcd registry
-	etcdBalancer := balancer.NewEtcdBalancer("192.168.0.3:2379")
+	etcdBalancer := balancer.NewEtcdBalancer("localhost:2379")
 
 	var wg sync.WaitGroup
 	wg.Add(1)
