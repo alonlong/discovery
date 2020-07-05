@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/resolver"
 )
 
-// cliCmd represents the serve command
+// cliCmd represents the client command
 var cliCmd = &cobra.Command{
 	Use:   "client",
 	Short: "Request the grpc server",
