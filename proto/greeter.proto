@@ -5,6 +5,7 @@ option go_package = "../apis/greeter";
 
 service Greeter {
   rpc SayHello (SayHelloRequest) returns (SayHelloReply) {}
+  rpc Join (JoinRequest) returns (JoinReply) {};
 }
 
 message SayHelloRequest {
@@ -13,4 +14,12 @@ message SayHelloRequest {
 
 message SayHelloReply {
   string message = 1;
+}
+
+message JoinRequest {
+  string teamName = 1;
+}
+
+message JoinReply {
+  string id = 1;
 }

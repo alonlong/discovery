@@ -1,9 +1,12 @@
 package cmd
 
 import (
+	"bytes"
 	"context"
 	"discovery/pkg/balancer"
+	"encoding/json"
 	"log"
+	"strings"
 
 	"github.com/fullstorydev/grpcurl"
 	"github.com/jhump/protoreflect/grpcreflect"
@@ -45,6 +48,8 @@ func reflect() {
 	defer reflectClient.Reset()
 
 	sourceReflect := grpcurl.DescriptorSourceFromServer(context.Background(), reflectClient)
+
+	// list the services
 	services, err := grpcurl.ListServices(sourceReflect)
 	if err != nil {
 		log.Fatalf("list services: %v", err)
@@ -54,6 +59,8 @@ func reflect() {
 			continue
 		}
 		log.Printf("service: %s", service)
+
+		// list the methods for service
 		methods, err := grpcurl.ListMethods(sourceReflect, service)
 		if err != nil {
 			log.Fatalf("list methods: %v", err)
@@ -61,5 +68,32 @@ func reflect() {
 		for _, method := range methods {
 			log.Printf("\tmethod: %s", method)
 		}
+
+		descriptor, err := sourceReflect.FindSymbol(service)
+		if err != nil {
+			log.Fatalf("find symbol: %v", err)
+		}
+		log.Printf("fully qualified name: %s", descriptor.GetFullyQualifiedName())
 	}
+
+	// new reader for json string
+	in := strings.NewReader(`{"name": "World"}`)
+	parser, formmater, err := grpcurl.RequestParserAndFormatterFor(grpcurl.FormatJSON, sourceReflect, true, false, in)
+	if err != nil {
+		log.Fatalf("request parser and formmater: %v", err)
+	}
+
+	var out bytes.Buffer
+	handler := grpcurl.NewDefaultEventHandler(&out, sourceReflect, formmater, false)
+
+	symbol := "apis.Greeter/SayHello"
+	if err := grpcurl.InvokeRPC(context.Background(), sourceReflect, conn, symbol, nil, handler, parser.Next); err != nil {
+		log.Fatalf("invoke rpc: %v", err)
+	}
+	log.Printf("response: %s", out.String())
+}
+
+func struct2JSON(v interface{}) string {
+	b, _ := json.Marshal(v)
+	return string(b)
 }
