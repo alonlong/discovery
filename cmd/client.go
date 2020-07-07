@@ -22,12 +22,16 @@ var cliCmd = &cobra.Command{
 }
 
 func init() {
+	cliCmd.PersistentFlags().StringVar(&addr, "addr", "localhost:2379", "etcd server's address")
+}
+
+func init() {
 	RootCmd.AddCommand(cliCmd)
 }
 
 // the main process for the client subcommand
 func cli() {
-	r := balancer.NewEtcdBalancer("localhost:2379").Resolver()
+	r := balancer.NewEtcdBalancer(addr).Resolver()
 	resolver.Register(r)
 	conn, err := grpc.Dial(
 		r.Scheme()+"://author/my-service",

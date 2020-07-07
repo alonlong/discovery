@@ -17,11 +17,6 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-var (
-	ip   string
-	port string
-)
-
 // serveCmd represents the serve command
 var serveCmd = &cobra.Command{
 	Use:   "server",
@@ -35,6 +30,7 @@ var serveCmd = &cobra.Command{
 func init() {
 	serveCmd.PersistentFlags().StringVar(&ip, "ip", "localhost", "grpc server's ip")
 	serveCmd.PersistentFlags().StringVar(&port, "port", "15001", "grpc server's port")
+	serveCmd.PersistentFlags().StringVar(&addr, "addr", "localhost:2379", "etcd server's address")
 }
 
 func init() {
@@ -69,7 +65,7 @@ func serve() {
 	greeter.RegisterGreeterServer(s, &greeter.Server{})
 
 	// register the service to etcd registry
-	etcdBalancer := balancer.NewEtcdBalancer("localhost:2379")
+	etcdBalancer := balancer.NewEtcdBalancer(addr)
 
 	var wg sync.WaitGroup
 	wg.Add(1)

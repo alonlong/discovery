@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"discovery/pkg/balancer"
-	"encoding/json"
 	"log"
 	"strings"
 
@@ -26,12 +25,16 @@ var reflectCmd = &cobra.Command{
 }
 
 func init() {
+	reflectCmd.PersistentFlags().StringVar(&addr, "addr", "localhost:2379", "etcd server's address")
+}
+
+func init() {
 	RootCmd.AddCommand(reflectCmd)
 }
 
 // the main process for the reflect subcommand
 func reflect() {
-	r := balancer.NewEtcdBalancer("localhost:2379").Resolver()
+	r := balancer.NewEtcdBalancer(addr).Resolver()
 	resolver.Register(r)
 	conn, err := grpc.Dial(
 		r.Scheme()+"://author/my-service",
@@ -42,7 +45,6 @@ func reflect() {
 		log.Fatalf("grpc dial: %v", err)
 	}
 	defer conn.Close()
-	log.Printf("connected")
 
 	reflectClient := grpcreflect.NewClient(context.Background(), reflectpb.NewServerReflectionClient(conn))
 	defer reflectClient.Reset()
@@ -91,9 +93,4 @@ func reflect() {
 		log.Fatalf("invoke rpc: %v", err)
 	}
 	log.Printf("response: %s", out.String())
-}
-
-func struct2JSON(v interface{}) string {
-	b, _ := json.Marshal(v)
-	return string(b)
 }
