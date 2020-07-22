@@ -34,7 +34,7 @@ func cli() {
 	r := balancer.NewEtcdBalancer(addr).Resolver()
 	resolver.Register(r)
 	conn, err := grpc.Dial(
-		r.Scheme()+"://author/my-service",
+		r.Scheme()+"://authority/my-service",
 		grpc.WithBalancerName("round_robin"),
 		grpc.WithInsecure(),
 	)
