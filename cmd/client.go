@@ -3,13 +3,12 @@ package cmd
 import (
 	"context"
 	"discovery/apis/greeter"
-	"discovery/pkg/balancer"
+	"discovery/pkg/etcd"
 	"log"
 	"time"
 
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/resolver"
 )
 
 // cliCmd represents the client command
@@ -31,8 +30,7 @@ func init() {
 
 // the main process for the client subcommand
 func cli() {
-	r := balancer.NewEtcdBalancer(addr).Resolver()
-	resolver.Register(r)
+	r := etcd.NewRegister(addr)
 	conn, err := grpc.Dial(
 		r.Scheme()+"://authority/my-service",
 		grpc.WithBalancerName("round_robin"),

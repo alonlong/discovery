@@ -3,7 +3,7 @@ package cmd
 import (
 	"bytes"
 	"context"
-	"discovery/pkg/balancer"
+	"discovery/pkg/etcd"
 	"log"
 	"strings"
 
@@ -12,7 +12,6 @@ import (
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 	reflectpb "google.golang.org/grpc/reflection/grpc_reflection_v1alpha"
-	"google.golang.org/grpc/resolver"
 )
 
 // reflectCmd represents the serve command
@@ -34,8 +33,7 @@ func init() {
 
 // the main process for the reflect subcommand
 func reflect() {
-	r := balancer.NewEtcdBalancer(addr).Resolver()
-	resolver.Register(r)
+	r := etcd.NewRegister(addr)
 	conn, err := grpc.Dial(
 		r.Scheme()+"://author/my-service",
 		grpc.WithBalancerName("round_robin"),

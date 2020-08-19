@@ -1,4 +1,4 @@
-package balancer
+package etcd
 
 import (
 	"context"
@@ -28,16 +28,15 @@ var (
 	scheme = "services"
 )
 
-// EtcdBalancer defines a balancer based on etcd
-type EtcdBalancer struct {
+// Register defines a register based on etcd
+type Register struct {
 	client      *clientv3.Client // the etcd client
-	resolver    resolver.Builder // the etcd resolver
 	servicePath string           // the service path
 	done        chan struct{}    // notify exit
 }
 
-// NewEtcdBalancer returns a etcd balancer
-func NewEtcdBalancer(addr string) *EtcdBalancer {
+// NewRegister returns a etcd register
+func NewRegister(addr string) *Register {
 	// new a etcd client which based on grpc protocol
 	client, err := clientv3.New(clientv3.Config{
 		Endpoints:   strings.Split(addr, ";"),
@@ -48,18 +47,12 @@ func NewEtcdBalancer(addr string) *EtcdBalancer {
 	}
 
 	// new a etcd resolver
-	resolver := newResolver(client)
+	resolver.Register(newResolver(client))
 
-	return &EtcdBalancer{
-		client:   client,
-		resolver: resolver,
-		done:     make(chan struct{}),
+	return &Register{
+		client: client,
+		done:   make(chan struct{}),
 	}
-}
-
-// Resolver returns a etcd resolver
-func (s *EtcdBalancer) Resolver() resolver.Builder {
-	return s.resolver
 }
 
 // Endpoint for service
@@ -78,7 +71,7 @@ type Service struct {
 	Endpoints []Endpoint `json:"endpoints"`
 }
 
-func (s *EtcdBalancer) register(service *Service) error {
+func (s *Register) register(service *Service) error {
 	ctx := context.Background()
 	// try to get the specific service instance information from etcd registry
 	res, err := s.client.Get(ctx, s.servicePath)
@@ -94,8 +87,13 @@ func (s *EtcdBalancer) register(service *Service) error {
 	return nil
 }
 
+// Schema returns the schema
+func (s *Register) Scheme() string {
+	return scheme
+}
+
 // Register service with service path to registry
-func (s *EtcdBalancer) Register(wg *sync.WaitGroup, service *Service) error {
+func (s *Register) Register(wg *sync.WaitGroup, service *Service) error {
 	defer wg.Done()
 
 	// init the service path
@@ -124,7 +122,7 @@ func (s *EtcdBalancer) Register(wg *sync.WaitGroup, service *Service) error {
 	}
 }
 
-func (s *EtcdBalancer) keepalive(ctx context.Context, service *Service) error {
+func (s *Register) keepalive(ctx context.Context, service *Service) error {
 	// Grant creates a new lease.
 	lease, err := s.client.Grant(ctx, EtcdRegisterTTL)
 	if err != nil {
@@ -151,7 +149,7 @@ func (s *EtcdBalancer) keepalive(ctx context.Context, service *Service) error {
 }
 
 // UnRegister service with service path from etcd registry
-func (s *EtcdBalancer) UnRegister() error {
+func (s *Register) UnRegister() error {
 	if s.servicePath == "" {
 		return errors.New("service path is empty")
 	}
@@ -166,7 +164,7 @@ func (s *EtcdBalancer) UnRegister() error {
 }
 
 // Close the etcd balancer gracefully
-func (s *EtcdBalancer) Close() {
+func (s *Register) Close() {
 	// close the timer first
 	if s.done != nil {
 		close(s.done)

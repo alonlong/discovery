@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"discovery/apis/greeter"
-	"discovery/pkg/balancer"
+	"discovery/pkg/etcd"
 	"fmt"
 	"log"
 	"net"
@@ -38,11 +38,11 @@ func init() {
 }
 
 // init service information to register etcd
-func newService() *balancer.Service {
-	return &balancer.Service{
+func newService() *etcd.Service {
+	return &etcd.Service{
 		ID:   uuid.New().String(),
 		Name: "my-service",
-		Endpoints: []balancer.Endpoint{
+		Endpoints: []etcd.Endpoint{
 			{
 				IP:       ip,
 				Port:     port,
@@ -65,11 +65,11 @@ func serve() {
 	greeter.RegisterGreeterServer(s, &greeter.Server{})
 
 	// register the service to etcd registry
-	etcdBalancer := balancer.NewEtcdBalancer(addr)
+	r := etcd.NewRegister(addr)
 
 	var wg sync.WaitGroup
 	wg.Add(1)
-	go etcdBalancer.Register(&wg, newService())
+	go r.Register(&wg, newService())
 
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL, syscall.SIGHUP, syscall.SIGQUIT)
@@ -77,12 +77,12 @@ func serve() {
 		select {
 		case <-sig:
 			// unregister the service first
-			if err := etcdBalancer.UnRegister(); err != nil {
+			if err := r.UnRegister(); err != nil {
 				log.Printf("unregister: %v", err)
 			}
 
 			// close the etcd balancer
-			etcdBalancer.Close()
+			r.Close()
 
 			// stop the grpc server
 			s.GracefulStop()

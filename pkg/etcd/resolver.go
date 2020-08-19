@@ -1,4 +1,4 @@
-package balancer
+package etcd
 
 import (
 	"context"
@@ -12,8 +12,8 @@ import (
 	"google.golang.org/grpc/resolver"
 )
 
-// etcd resolver implements interfaces 'Builder and Resolver'
-type etcdResolver struct {
+// Resolver implements interfaces 'Builder and Resolver'
+type Resolver struct {
 	client *clientv3.Client // the etcd client
 
 	// resolver.ClientConn contains the callbacks for resolver to notify any updates to the gRPC ClientConn.
@@ -24,14 +24,14 @@ type etcdResolver struct {
 
 // newResolver returns a etcd resolver
 func newResolver(client *clientv3.Client) resolver.Builder {
-	return &etcdResolver{
+	return &Resolver{
 		client: client,
 		done:   make(chan struct{}),
 	}
 }
 
 // Build creates a new resolver for the given target.
-func (s *etcdResolver) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOptions) (resolver.Resolver, error) {
+func (s *Resolver) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOptions) (resolver.Resolver, error) {
 	// grpc client connection
 	s.cc = cc
 
@@ -44,28 +44,22 @@ func (s *etcdResolver) Build(target resolver.Target, cc resolver.ClientConn, opt
 }
 
 // Scheme returns the scheme supported by this resolver.
-func (s *etcdResolver) Scheme() string {
+func (s *Resolver) Scheme() string {
 	return scheme
 }
 
 // ResolveNow will be called by gRPC to try to resolve the target name again.
-func (s *etcdResolver) ResolveNow(opts resolver.ResolveNowOptions) {
-}
+func (s *Resolver) ResolveNow(o resolver.ResolveNowOptions) {}
 
 // Close the resolver.
-func (s *etcdResolver) Close() {
+func (s *Resolver) Close() {
 	if s.done != nil {
 		close(s.done)
 	}
 }
 
-func struct2JSON(v interface{}) string {
-	b, _ := json.Marshal(v)
-	return string(b)
-}
-
 // watch and handle the address changes for service from etcd registry
-func (s *etcdResolver) watch(target resolver.Target) error {
+func (s *Resolver) watch(target resolver.Target) error {
 	prefix := "/" + target.Scheme + "/" + target.Endpoint
 	// get the root directory of the service
 	root, err := s.client.Get(context.Background(), prefix, clientv3.WithPrefix())
@@ -98,7 +92,7 @@ func (s *etcdResolver) watch(target resolver.Target) error {
 	}
 
 	// trigger the grpc client connection to update the addresses
-	s.cc.NewAddress(addrs)
+	s.cc.UpdateState(resolver.State{Addresses: addrs})
 
 	go func() {
 		// watch and handle the changes for the service from etcd registry
@@ -136,7 +130,7 @@ func (s *etcdResolver) watch(target resolver.Target) error {
 						var ok bool
 						// handle the endpoints
 						if addrs, ok = addition(addrs, service.Endpoints); ok {
-							s.cc.NewAddress(addrs)
+							s.cc.UpdateState(resolver.State{Addresses: addrs})
 						}
 
 					case mvccpb.DELETE:
@@ -156,7 +150,7 @@ func (s *etcdResolver) watch(target resolver.Target) error {
 						var ok bool
 						// handle the endpoints
 						if addrs, ok = deletion(addrs, service.Endpoints); ok {
-							s.cc.NewAddress(addrs)
+							s.cc.UpdateState(resolver.State{Addresses: addrs})
 						}
 					}
 				}

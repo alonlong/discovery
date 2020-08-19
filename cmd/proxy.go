@@ -3,7 +3,7 @@ package cmd
 import (
 	"bytes"
 	"context"
-	"discovery/pkg/balancer"
+	"discovery/pkg/etcd"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -15,7 +15,6 @@ import (
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 	reflectpb "google.golang.org/grpc/reflection/grpc_reflection_v1alpha"
-	"google.golang.org/grpc/resolver"
 )
 
 // proxyCmd represents the serve command
@@ -40,8 +39,7 @@ var conn *grpc.ClientConn
 
 // start the proxy server
 func proxy() {
-	r := balancer.NewEtcdBalancer(addr).Resolver()
-	resolver.Register(r)
+	r := etcd.NewRegister(addr)
 	c, err := grpc.Dial(
 		r.Scheme()+"://author/my-service",
 		grpc.WithBalancerName("round_robin"),
