@@ -25,7 +25,7 @@ const (
 )
 
 var (
-	scheme = "services"
+	prefix = "services"
 )
 
 // Register defines a register based on etcd
@@ -87,17 +87,12 @@ func (s *Register) register(service *Service) error {
 	return nil
 }
 
-// Schema returns the schema
-func (s *Register) Scheme() string {
-	return scheme
-}
-
 // Register service with service path to registry
 func (s *Register) Register(wg *sync.WaitGroup, service *Service) error {
 	defer wg.Done()
 
 	// init the service path
-	s.servicePath = "/" + scheme + "/" + service.Name + "/" + service.ID
+	s.servicePath = "/" + prefix + "/" + service.Name + "/" + service.ID
 
 	// register once before starting the timer
 	if err := s.register(service); err != nil {

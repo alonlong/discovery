@@ -30,9 +30,9 @@ func init() {
 
 // the main process for the client subcommand
 func cli() {
-	r := etcd.NewRegister(addr)
+	etcd.NewRegister(addr)
 	conn, err := grpc.Dial(
-		r.Scheme()+"://authority/my-service",
+		"etcd://authority/my-service",
 		grpc.WithBalancerName("round_robin"),
 		grpc.WithInsecure(),
 	)

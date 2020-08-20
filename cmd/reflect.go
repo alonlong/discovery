@@ -33,9 +33,9 @@ func init() {
 
 // the main process for the reflect subcommand
 func reflect() {
-	r := etcd.NewRegister(addr)
+	etcd.NewRegister(addr)
 	conn, err := grpc.Dial(
-		r.Scheme()+"://author/my-service",
+		"etcd://author/my-service",
 		grpc.WithBalancerName("round_robin"),
 		grpc.WithInsecure(),
 	)

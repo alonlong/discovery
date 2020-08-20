@@ -39,9 +39,9 @@ var conn *grpc.ClientConn
 
 // start the proxy server
 func proxy() {
-	r := etcd.NewRegister(addr)
+	etcd.NewRegister(addr)
 	c, err := grpc.Dial(
-		r.Scheme()+"://author/my-service",
+		"etcd://author/my-service",
 		grpc.WithBalancerName("round_robin"),
 		grpc.WithInsecure(),
 	)
