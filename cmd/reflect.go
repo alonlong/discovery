@@ -12,6 +12,7 @@ import (
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 	reflectpb "google.golang.org/grpc/reflection/grpc_reflection_v1alpha"
+	"google.golang.org/grpc/resolver"
 )
 
 // reflectCmd represents the serve command
@@ -33,7 +34,10 @@ func init() {
 
 // the main process for the reflect subcommand
 func reflect() {
-	etcd.NewRegister(addr)
+	r := etcd.NewRegister(addr)
+	// register the etcd resolver
+	resolver.Register(r.Resolver())
+
 	conn, err := grpc.Dial(
 		"etcd://author/my-service",
 		grpc.WithBalancerName("round_robin"),

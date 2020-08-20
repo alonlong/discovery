@@ -9,6 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/resolver"
 )
 
 // cliCmd represents the client command
@@ -30,7 +31,10 @@ func init() {
 
 // the main process for the client subcommand
 func cli() {
-	etcd.NewRegister(addr)
+	r := etcd.NewRegister(addr)
+	// register the etcd resolver
+	resolver.Register(r.Resolver())
+
 	conn, err := grpc.Dial(
 		"etcd://authority/my-service",
 		grpc.WithBalancerName("round_robin"),

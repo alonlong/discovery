@@ -32,6 +32,8 @@ func newResolver(client *clientv3.Client) resolver.Builder {
 	}
 }
 
+/** interfaces implementation for resolver.Builder **/
+
 // Build creates a new resolver for the given target.
 func (s *BuilderAndResolver) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOptions) (resolver.Resolver, error) {
 	// grpc client connection
@@ -49,6 +51,8 @@ func (s *BuilderAndResolver) Build(target resolver.Target, cc resolver.ClientCon
 func (s *BuilderAndResolver) Scheme() string {
 	return scheme
 }
+
+/** interfaces implementation for resolver.Resolver **/
 
 // ResolveNow will be called by gRPC to try to resolve the target name again.
 func (s *BuilderAndResolver) ResolveNow(o resolver.ResolveNowOptions) {}
@@ -106,6 +110,12 @@ func (s *BuilderAndResolver) watch(target resolver.Target) error {
 				return
 
 			case data := <-watchChan:
+				select {
+				case <-s.done:
+					return
+				default:
+				}
+
 				if data.Err() != nil {
 					log.Printf("watch error: %v", data.Err())
 					time.Sleep(time.Second * 5)

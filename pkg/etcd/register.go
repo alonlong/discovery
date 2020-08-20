@@ -31,6 +31,7 @@ var (
 // Register defines a register based on etcd
 type Register struct {
 	client      *clientv3.Client // the etcd client
+	builder     resolver.Builder // the resolver builder
 	servicePath string           // the service path
 	done        chan struct{}    // notify exit
 }
@@ -46,12 +47,10 @@ func NewRegister(addr string) *Register {
 		panic(err)
 	}
 
-	// new a etcd resolver
-	resolver.Register(newResolver(client))
-
 	return &Register{
-		client: client,
-		done:   make(chan struct{}),
+		client:  client,
+		builder: newResolver(client),
+		done:    make(chan struct{}),
 	}
 }
 
@@ -85,6 +84,11 @@ func (s *Register) register(service *Service) error {
 		}
 	}
 	return nil
+}
+
+// Resolver returns the builder for etcd resolver
+func (s *Register) Resolver() resolver.Builder {
+	return s.builder
 }
 
 // Register service with service path to registry
