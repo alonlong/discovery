@@ -1,0 +1,1 @@
+curl -XPOST -d '{"name":"alon"}' "http://localhost:3000/api/apis.Greeter/SayHello"
