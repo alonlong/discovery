@@ -72,23 +72,20 @@ func serve() {
 	go etcdBalancer.Register(&wg, newService())
 
 	sig := make(chan os.Signal, 1)
-	signal.Notify(sig, syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL, syscall.SIGHUP, syscall.SIGQUIT)
+	signal.Notify(sig, syscall.SIGTERM, syscall.SIGINT)
 	go func() {
-		select {
-		case <-sig:
-			// unregister the service first
-			if err := etcdBalancer.UnRegister(); err != nil {
-				log.Printf("unregister: %v", err)
-			}
+		<-sig
 
-			// close the etcd balancer
-			etcdBalancer.Close()
-
-			// stop the grpc server
-			s.GracefulStop()
-
-			return
+		// unregister the service first
+		if err := etcdBalancer.UnRegister(); err != nil {
+			log.Printf("unregister: %v", err)
 		}
+
+		// close the etcd balancer
+		etcdBalancer.Close()
+
+		// stop the grpc server
+		s.GracefulStop()
 	}()
 
 	// Register reflection service on gRPC server.
